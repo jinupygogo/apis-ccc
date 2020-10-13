@@ -46,7 +46,6 @@ $ bash start.sh
 
 <a id="anchor1"></a>
 ## Documentation
-&emsp;[apis-ccc_specification(JP)](https://github.com/SonyCSL/apis-web/blob/master/doc/jp/apis-web_specification.md)
 
 
 
