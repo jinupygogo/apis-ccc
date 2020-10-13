@@ -1,0 +1,179 @@
+{
+	// 起動時に引数 -conf path/to/this_file.json で指定する
+
+	// programId : プログラム識別文字列
+	//             ApisLoggerFormatter によりログの行頭に出力される
+	"programId" : "apis-ccc",
+
+	// communityId : コミュニティ識別文字列
+	//               clusterId および APIS バージョン文字列とともに暗号化のシードとして用いられる
+	"communityId" : "dev",
+	// clusterId : クラスタ識別文字列
+	//             communityId および APIS バージョン文字列とともに暗号化のシードとして用いられる
+	"clusterId" : "dev",
+
+	// security : EventBus メッセージ通信の SSL 化および Cluster Wide Map の暗号化設定
+	"security" : {
+		// enabled : 有効フラグ
+		//           EventBus メッセージ通信の SSL 化および Cluster Wide Map の暗号化を実施するか否か
+		//           デフォルト : false
+		"enabled" : true,
+		// pemKeyFile : 秘密鍵ファイルのパス
+		//              EventBus メッセージ通信の SSL 化に用いる
+		"pemKeyFile" : "./src/main/resources/sample-key.pem",
+		// pemCertFile : 証明書ファイルのパス
+		//               EventBus メッセージ通信の SSL 化に用いる
+		"pemCertFile" : "./src/main/resources/sample-cert.pem"
+	},
+
+	// dealReporting : 外部サービスへ融通情報を通知する設定
+	"dealReporting" : {
+		// enabled : 有効フラグ
+		//           外部サービスへ融通情報を通知するか否か
+		//           デフォルト : true
+		"enabled" : true,
+		// type : 外部サービスの種類
+		//        値は以下のいずれか
+		//        - mongo_db : MongoDB に保存する
+		//        - kl_cc : ウェブサービスに HTTP POST する
+		//        デフォルト : mongo_db
+		"type" : "kl_cc",
+		// periodMsec : 通知周期
+		//              型 : Long
+		//              デフォルト : 30000L
+		"periodMsec" : 30000,
+		// host : 外部サービスのホスト名
+		"host" : "localhost",
+		// port : 外部サービスのポート
+		//        型 : Integer
+		//        デフォルト : type が mongo_db なら 27017
+		//        デフォルト : type が kl_cc なら : ssl が false なら 80
+		//        デフォルト : type が kl_cc なら : ssl が true なら 443
+		"port" : 80,
+		// ssl : SSL フラグ
+		//       デフォルト : false
+		"ssl" : false,
+		// sslTrustAll : SSL なんでも OK フラグ
+		//               デフォルト : false
+		"sslTrustAll" : false,
+		// database : MongoDB データベース名 ( type が mongo_db の場合のみ )
+		"database" : "apis_service_center",
+		// collection : MongoDB コレクション名 ( type が mongo_db の場合のみ )
+		"collection" : "deal",
+		// uri : 外部サービスの通知 URI ( type が kl_cc の場合のみ )
+		"uri" : "/cgi-bin/WebObjects/KnowledgeLineTEST.woa/wa/ApisDeal/save",
+		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間 ( type が kl_cc の場合のみ )
+		//                      型 : Long
+		//                      デフォルト : 5000L
+		"requestTimeoutMsec" : 5000
+	},
+	// unitDataReporting : 外部サービスへユニットデータを通知する設定
+	"unitDataReporting" : {
+		// enabled : 有効フラグ
+		//           外部サービスへユニットデータを通知するか否か
+		//           デフォルト : true
+		"enabled" : false,
+		// type : 外部サービスの種類
+		//        値は以下のいずれか
+		//        - mongo_db : MongoDB に保存する
+		//        - kl_cc : ウェブサービスに HTTP POST する
+		//        デフォルト : mongo_db
+		"type" : "mongo_db",
+		// periodMsec : 通知周期
+		//              型 : Long
+		//              デフォルト : 30000L
+		"periodMsec" : 30000,
+		// host : 外部サービスのホスト名
+		"host" : "localhost",
+		// port : 外部サービスのポート
+		//        型 : Integer
+		//        デフォルト : type が mongo_db なら 27017
+		//        デフォルト : type が kl_cc なら : ssl が false なら 80
+		//        デフォルト : type が kl_cc なら : ssl が true なら 443
+		"port" : 27017,
+		// ssl : SSL フラグ
+		//       デフォルト : false
+		"ssl" : false,
+		// sslTrustAll : SSL なんでも OK フラグ
+		//               デフォルト : false
+		"sslTrustAll" : false,
+		// database : MongoDB データベース名 ( type が mongo_db の場合のみ )
+		"database" : "apis_service_center",
+		// collection : MongoDB コレクション名 ( type が mongo_db の場合のみ )
+		"collection" : "unitData",
+		// uri : 外部サービスの通知 URI ( type が kl_cc の場合のみ )
+		"uri" : "/cgi-bin/WebObjects/KnowledgeLineTEST.woa/wa/ApisUnitData/save",
+		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間 ( type が kl_cc の場合のみ )
+		//                      型 : Long
+		//                      デフォルト : 5000L
+		"requestTimeoutMsec" : 5000
+	},
+	// unitDataReporting : 外部サービスから SCENARIO を取得する設定
+	"scenarioAcquisition" : {
+		// host : 外部サービスのホスト名
+		"host" : "server.example.com",
+		// port : 外部サービスのポート
+		//        型 : Integer
+		//        デフォルト : ssl が false なら 80
+		//        デフォルト : ssl が true なら 443
+		"port" : 10000,
+		// ssl : SSL フラグ
+		//       デフォルト : false
+		"ssl" : true,
+		// sslTrustAll : SSL なんでも OK フラグ
+		//               デフォルト : false
+		"sslTrustAll" : false,
+		// uri : 外部サービスの通知 URI
+		"uri" : "/cgi-bin/WebObjects/KnowledgeLineTEST.woa/wa/ApisScenario/getCurrent",
+		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間
+		//                      型 : Long
+		//                      デフォルト : 5000L
+		"requestTimeoutMsec" : 5000
+	},
+	// unitDataReporting : 外部サービスから POLICY を取得する設定
+	"policyAcquisition" : {
+		// host : 外部サービスのホスト名
+		"host" : "server.example.com",
+		// port : 外部サービスのポート
+		//        型 : Integer
+		//        デフォルト : ssl が false なら 80
+		//        デフォルト : ssl が true なら 443
+		"port" : 80,
+		// ssl : SSL フラグ
+		//       デフォルト : false
+		"ssl" : false,
+		// sslTrustAll : SSL なんでも OK フラグ
+		//               デフォルト : false
+		"sslTrustAll" : false,
+		// uri : 外部サービスの通知 URI
+		"uri" : "/empty",
+		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間
+		//                      型 : Long
+		//                      デフォルト : 5000L
+		"requestTimeoutMsec" : 5000
+	},
+
+	// watchdog : watchdog 設定
+	"watchdog" : {
+		// enabled : 有効フラグ
+		//           watchdog 機能を実行するか否か
+		"enabled" : false,
+		// periodMsec : 実行周期
+		//              型 : Long
+		//              デフォルト : 5000L
+		"periodMsec" : 5000,
+		// host : watchdog サービスのホスト名
+		"host" : "0.0.0.0",
+		// port : watchdog サービスのポート
+		//        型 : Integer
+		//        必須
+		"port" : 12345,
+		// uri : watchdog サービスの URI
+		"uri" : "/restart",
+		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間
+		//                      型 : Long
+		//                      デフォルト : 5000L
+		"requestTimeoutMsec" : 5000
+	}
+
+}
