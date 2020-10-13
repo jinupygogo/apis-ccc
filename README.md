@@ -9,6 +9,9 @@ apis-cccはEthernet等のコミュニケーションラインに接続された�
 ソフトウェア情報、ノード固有情報等を取得し、任意のノードから電力融通情報を取得する。  
 
 
+![キャプチャ](https://user-images.githubusercontent.com/71874910/95824505-5f35fc00-0d6a-11eb-8eb5-90fe79539d8a.PNG)
+
+
 ## Installation
 ```bash
 $ git clone https://github.com/SonyCSL/apis-bom.git
