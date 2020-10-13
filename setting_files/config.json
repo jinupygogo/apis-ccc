@@ -1,0 +1,68 @@
+{
+	"#" : "start vertx or fat jar with option '-conf path/to/config_file.json'",
+
+	"programId" : "apis-ccc",
+
+	"communityId" : "oss_community",
+	"clusterId" : "oss_cluster",
+
+	"security" : {
+		"enabled" : true,
+		"pemKeyFile" : "./key.pem",
+		"pemCertFile" : "./cert.pem"
+	},
+
+	"dealReporting" : {
+		"enabled" : false,
+		"periodMsec" : 30000,
+		"type" : "kl_cc",
+		"host" : "localhost",
+		"port" : 10000,
+		"ssl" : false,
+		"sslTrustAll" : false,
+		"database" : "apis",
+		"collection" : "deal",
+		"uri" : "/cgi-bin/WebObjects/ApisServiceCenter.woa/wa/ApisDeal/save",
+		"requestTimeoutMsec" : 5000
+	},
+	"unitDataReporting" : {
+		"enabled" : false,
+		"periodMsec" : 30000,
+		"type" : "kl_cc",
+		"host" : "localhost",
+		"port" : 10000,
+		"ssl" : false,
+		"sslTrustAll" : false,
+		"database" : "apis",
+		"collection" : "unitData",
+		"uri" : "/cgi-bin/WebObjects/ApisServiceCenter.woa/wa/ApisUnitData/save",
+		"requestTimeoutMsec" : 5000
+	},
+	"scenarioAcquisition" : {
+		"host" : "localhost",
+		"port" : 10000,
+		"ssl" : false,
+		"sslTrustAll" : false,
+		"uri" : "/cgi-bin/WebObjects/ApisServiceCenter.woa/wa/ApisScenario/getCurrent",
+		"requestTimeoutMsec" : 5000
+	},
+	"policyAcquisition" : {
+		"host" : "localhost",
+		"port" : 80,
+		"ssl" : false,
+		"sslTrustAll" : false,
+		"uri" : "/empty",
+		"requestTimeoutMsec" : 5000
+	},
+
+	"watchdog" : {
+		"enabled" : false,
+		"periodMsec" : 5000,
+		"host" : "localhost",
+		"port" : 12345,
+		"uri" : "/restart",
+		"requestTimeoutMsec" : 5000
+	},
+
+	"#" : "end"
+}
