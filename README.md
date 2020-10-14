@@ -25,10 +25,6 @@ $ cd ../
 $ git cone https://github.com/SonyCSL/apis-ccc.git
 $ cd apis-ccc
 $ mvn package
-$ cd ../
-$ mkdir apis-ccc_exe
-$ cp ./apis-ccc/target/apis-ccc-*-fat.jar ./apis-ccc_exe
-$ cp ./apis-ccc/setting_files/* ./apis-ccc_exe
 ```
 
 ## Parameter Setting
@@ -49,7 +45,7 @@ Refer to "Chapter 7, About Configuration Files" in the [apis-ccc_specification](
 ## Running
 
 ```bash
-$ cd apis-ccc_exe
+$ cd exe
 $ bash start.sh
 ```
 
