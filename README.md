@@ -13,6 +13,9 @@ apis-cccはEthernet等のコミュニケーションラインに接続された�
 
 
 ## Installation
+
+Maven and JDK shall be installed in advance.  
+
 ```bash
 $ git clone https://github.com/SonyCSL/apis-bom.git
 $ cd apis-bom
