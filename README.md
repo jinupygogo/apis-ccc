@@ -28,7 +28,7 @@ $ mvn package
 ```
 
 ## Parameter Setting
-Set the following file parameters in the apis-ccc_exe at least to suit your environment.   
+Set the following file parameters in the exe folder at least to suit your environment.   
 Refer to "Chapter 7, About Configuration Files" in the [apis-ccc_specification](#anchor1) for more information.
 
 &emsp;config.json   
@@ -36,10 +36,12 @@ Refer to "Chapter 7, About Configuration Files" in the [apis-ccc_specification](
 &emsp;&emsp;&emsp;- clusterId     &emsp;(default : oss_clusterId)  
 
 &emsp;cluster.xml  
-&emsp;&emsp;&emsp;- \<interface\>  &emsp;(default : 127.0.0.1)
+&emsp;&emsp;&emsp;- \<member\>  &emsp;(default : 127.0.0.1)  
+&emsp;&emsp;&emsp;- \<interface\>  &emsp;(default : 127.0.0.1)  
 
 &emsp;start.sh  
-&emsp;&emsp;&emsp;- java arguments &emsp;(default : 127.0.0.1) 
+&emsp;&emsp;&emsp;-conf &emsp; (default : ./config.json)  
+&emsp;&emsp;&emsp;-cluster-host &emsp; (default : 127.0.0.1)    
 
 
 ## Running
