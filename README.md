@@ -13,7 +13,7 @@ apis-cccはEthernet等のコミュニケーションラインに接続された�
 
 
 ## Installation
-Here is how to install apis-ccc on its own.  
+Here is how to install apis-ccc individually.  
 Maven and JDK must be installed in advance.  
 
 ```bash
