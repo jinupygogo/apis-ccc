@@ -13,7 +13,7 @@ apis-cccはEthernet等のコミュニケーションラインに接続された�
 
 
 ## Installation
-
+Here is how to install apis-ccc on its own.
 Maven and JDK shall be installed in advance.  
 
 ```bash
@@ -31,7 +31,7 @@ $ mvn package
 ```
 
 ## Parameter Setting
-Set the following file parameters in the exe folder at least to suit your environment.   
+Set the following file parameters in the exe folder as necessary.   
 Refer to "Chapter 7, About Configuration Files" in the [apis-ccc_specification](#anchor1) for more information.
 
 &emsp;config.json   
