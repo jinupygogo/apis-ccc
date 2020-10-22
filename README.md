@@ -30,6 +30,20 @@ $ cd apis-ccc
 $ mvn package
 ```
 
+## Running
+
+```bash
+$ cd exe
+$ bash start.sh
+```
+
+## Stopping
+
+```bash
+$ cd exe
+$ bash stop.sh
+```
+
 ## Parameter Setting
 Set the following file parameters in the exe folder as necessary.   
 Refer to "Chapter 7, About Configuration Files" in the [apis-ccc_specification](#anchor1) for more information.
@@ -47,12 +61,6 @@ Refer to "Chapter 7, About Configuration Files" in the [apis-ccc_specification](
 &emsp;&emsp;&emsp;-cluster-host &emsp; (default : 127.0.0.1)    
 
 
-## Running
-
-```bash
-$ cd exe
-$ bash start.sh
-```
 
 <a id="anchor1"></a>
 ## Documentation
