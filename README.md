@@ -14,7 +14,7 @@ apis-cccはEthernet等のコミュニケーションラインに接続された�
 
 ## Installation
 Here is how to install apis-ccc individually.  
-Maven and JDK must be installed in advance.  
+git, maven, groovy and JDK must be installed in advance.
 
 ```bash
 $ git clone https://github.com/SonyCSL/apis-bom.git
