@@ -110,6 +110,10 @@
 	},
 	// unitDataReporting : 外部サービスから SCENARIO を取得する設定
 	"scenarioAcquisition" : {
+		// enabled : 有効フラグ
+		//           外部サービスから SCENARIO を取得するか否か
+		//           デフォルト : true
+		"enabled" : true,
 		// host : 外部サービスのホスト名
 		"host" : "server.example.com",
 		// port : 外部サービスのポート
@@ -132,6 +136,10 @@
 	},
 	// unitDataReporting : 外部サービスから POLICY を取得する設定
 	"policyAcquisition" : {
+		// enabled : 有効フラグ
+		//           外部サービスから POLICY を取得するか否か
+		//           デフォルト : true
+		"enabled" : false,
 		// host : 外部サービスのホスト名
 		"host" : "server.example.com",
 		// port : 外部サービスのポート

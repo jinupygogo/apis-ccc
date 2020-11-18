@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import jp.co.sony.csl.dcoes.apis.common.ServiceAddress;
+import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.kl_cc.KnowledgeLineScenarioAcquisitionImpl;
 
 /**
@@ -21,16 +22,25 @@ public class ScenarioAcquisition extends AbstractVerticle {
 	private static final Logger log = LoggerFactory.getLogger(ScenarioAcquisition.class);
 
 	private Impl impl_;
+	private boolean enabled_ = false;
 
 	/**
 	 * 起動時に呼び出される.
+	 * CONFIG から設定を取得し初期化する.
+	 * - {@code CONFIG.scenarioAcquisition.enabled}
 	 * 実装オブジェクトを用意する.
 	 * {@link io.vertx.core.eventbus.EventBus} サービスを起動する.
 	 * @param startFuture {@inheritDoc}
 	 * @throws Exception {@inheritDoc}
 	 */
 	@Override public void start(Future<Void> startFuture) throws Exception {
-		impl_ = new KnowledgeLineScenarioAcquisitionImpl(vertx);
+		enabled_ = VertxConfig.config.getBoolean(Boolean.TRUE, "scenarioAcquisition", "enabled");
+		if (enabled_) {
+			if (log.isInfoEnabled()) log.info("scenarioAcquisition enabled");
+			impl_ = new KnowledgeLineScenarioAcquisitionImpl(vertx);
+		} else {
+			if (log.isInfoEnabled()) log.info("scenarioAcquisition disabled");
+		}
 
 		startScenarioService_(resScenario -> {
 			if (resScenario.succeeded()) {
@@ -69,18 +79,22 @@ public class ScenarioAcquisition extends AbstractVerticle {
 	 */
 	private void startScenarioService_(Handler<AsyncResult<Void>> completionHandler) {
 		vertx.eventBus().<Void>consumer(ServiceAddress.ControlCenterClient.scenario(), req -> {
-			String account = req.headers().get("account");
-			String password = req.headers().get("password");
-			String unitId = req.headers().get("unitId");
-			impl_.acquireCurrent(account, password, unitId, resAcquire -> {
-				if (resAcquire.succeeded()) {
-					JsonObject result = resAcquire.result();
-					req.reply(result);
-				} else {
-					log.error("Communication failed with ServiceCenter ; " + resAcquire.cause());
-					req.fail(-1, resAcquire.cause().getMessage());
-				}
-			});
+			if (impl_ != null) {
+				String account = req.headers().get("account");
+				String password = req.headers().get("password");
+				String unitId = req.headers().get("unitId");
+				impl_.acquireCurrent(account, password, unitId, resAcquire -> {
+					if (resAcquire.succeeded()) {
+						JsonObject result = resAcquire.result();
+						req.reply(result);
+					} else {
+						log.error("Communication failed with ServiceCenter ; " + resAcquire.cause());
+						req.fail(-1, resAcquire.cause().getMessage());
+					}
+				});
+			} else {
+				req.reply(null);
+			}
 		}).completionHandler(completionHandler);
 	}
 
