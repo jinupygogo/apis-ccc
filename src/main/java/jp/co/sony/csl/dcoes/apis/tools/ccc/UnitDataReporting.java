@@ -10,7 +10,7 @@ import io.vertx.core.logging.LoggerFactory;
 import jp.co.sony.csl.dcoes.apis.common.ServiceAddress;
 import jp.co.sony.csl.dcoes.apis.common.util.vertx.JsonObjectUtil;
 import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
-import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.kl_cc.KnowledgeLineUnitDataReportingImpl;
+import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post.HttpPostUnitDataReportingImpl;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.mongo_db.MongoDBUnitDataReportingImpl;
 
 /**
@@ -18,7 +18,7 @@ import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.mongo_db.MongoDBUnitDataReportin
  * {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle から起動される.
  * 一定時間ごとに GridMaster からユニットデータを取得し通知する.
  * 実際の通知処理は以下の 2 つ.
- * - {@code CONFIG.unitDataReporting.type} が {@code kl_cc} : {@link KnowledgeLineUnitDataReportingImpl}
+ * - {@code CONFIG.unitDataReporting.type} が {@code http_post} : {@link HttpPostUnitDataReportingImpl}
  * - {@code CONFIG.unitDataReporting.type} が {@code mongo_db} : {@link MongoDBUnitDataReportingImpl}
  * @author OES Project
  */
@@ -58,8 +58,8 @@ public class UnitDataReporting extends AbstractVerticle {
 			String type = VertxConfig.config.getString(DEFAULT_UNIT_DATA_REPORTING_TYPE, "unitDataReporting", "type");
 			try {
 				switch (type) {
-				case "kl_cc":
-					impl_ = new KnowledgeLineUnitDataReportingImpl(vertx);
+				case "http_post":
+					impl_ = new HttpPostUnitDataReportingImpl(vertx);
 					break;
 				case "mongo_db":
 					impl_ = new MongoDBUnitDataReportingImpl(vertx);

@@ -1,4 +1,4 @@
-package jp.co.sony.csl.dcoes.apis.tools.ccc.impl.kl_cc;
+package jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -16,15 +16,15 @@ import java.time.ZonedDateTime;
 
 import jp.co.sony.csl.dcoes.apis.common.util.DateTimeUtil;
 import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
-import jp.co.sony.csl.dcoes.apis.tools.ccc.DealReporting;
+import jp.co.sony.csl.dcoes.apis.tools.ccc.UnitDataReporting;
 
 /**
- * KnowledgeLine に対して融通情報を通知する実装.
- * {@link DealReporting} で使用される.
+ * ウェブサービスに対して HTTP POST でユニットデータを通知する実装.
+ * {@link UnitDataReporting} で使用される.
  * @author OES Project
  */
-public class KnowledgeLineDealReportingImpl implements DealReporting.Impl {
-	private static final Logger log = LoggerFactory.getLogger(KnowledgeLineDealReportingImpl.class);
+public class HttpPostUnitDataReportingImpl implements UnitDataReporting.Impl {
+	private static final Logger log = LoggerFactory.getLogger(HttpPostUnitDataReportingImpl.class);
 
 	/**
 	 * HTTP 接続のタイムアウトのデフォルト値 [ms].
@@ -39,21 +39,21 @@ public class KnowledgeLineDealReportingImpl implements DealReporting.Impl {
 	/**
 	 * インスタンスを作成する.
 	 * CONFIG から設定を取得し初期化する.
-	 * - CONFIG.dealReporting.host : 接続先ホスト名 [{@link String}]
-	 * - CONFIG.dealReporting.ssl : SSL フラグ [{@link Boolean}]
-	 * - CONFIG.dealReporting.sslTrustAll : SSL なんでも OK フラグ [{@link Boolean}]
-	 * - CONFIG.dealReporting.port : 接続先ポート [{@link Integer}].
-	 *                               設定がない場合 SSL なら 443, そうでなければ 80.
-	 * - CONFIG.dealReporting.uri : 接続先 URI [{@link String}]
+	 * - CONFIG.unitDataReporting.host : 接続先ホスト名 [{@link String}]
+	 * - CONFIG.unitDataReporting.ssl : SSL フラグ [{@link Boolean}]
+	 * - CONFIG.unitDataReporting.sslTrustAll : SSL なんでも OK フラグ [{@link Boolean}]
+	 * - CONFIG.unitDataReporting.port : 接続先ポート [{@link Integer}].
+	 *                                   設定がない場合 SSL なら 443, そうでなければ 80.
+	 * - CONFIG.unitDataReporting.uri : 接続先 URI [{@link String}]
 	 * @param vertx vertx オブジェクト
 	 */
-	public KnowledgeLineDealReportingImpl(Vertx vertx) {
+	public HttpPostUnitDataReportingImpl(Vertx vertx) {
 		vertx_ = vertx;
-		String host = VertxConfig.config.getString("dealReporting", "host");
-		Boolean isSsl = VertxConfig.config.getBoolean(false, "dealReporting", "ssl");
-		Integer port = (isSsl) ? VertxConfig.config.getInteger(443, "dealReporting", "port") : VertxConfig.config.getInteger(80, "dealReporting", "port");
-		Boolean sslTrustAll = VertxConfig.config.getBoolean(false, "dealReporting", "sslTrustAll");
-		uri_ = VertxConfig.config.getString("dealReporting", "uri");
+		String host = VertxConfig.config.getString("unitDataReporting", "host");
+		Boolean isSsl = VertxConfig.config.getBoolean(false, "unitDataReporting", "ssl");
+		Integer port = (isSsl) ? VertxConfig.config.getInteger(443, "unitDataReporting", "port") : VertxConfig.config.getInteger(80, "unitDataReporting", "port");
+		Boolean sslTrustAll = VertxConfig.config.getBoolean(false, "unitDataReporting", "sslTrustAll");
+		uri_ = VertxConfig.config.getString("unitDataReporting", "uri");
 		if (log.isInfoEnabled()) log.info("host : " + host);
 		if (log.isInfoEnabled()) log.info("port : " + port);
 		if (isSsl) if (log.isInfoEnabled()) log.info("sslTrustAll : " + sslTrustAll);
@@ -64,41 +64,36 @@ public class KnowledgeLineDealReportingImpl implements DealReporting.Impl {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override public void report(JsonObject deal, Handler<AsyncResult<Void>> completionHandler) {
-		report(new JsonArray().add(deal), completionHandler);
-	}
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override public void report(JsonArray deals, Handler<AsyncResult<Void>> completionHandler) {
-		for (Object aDeal : deals) {
-			convertDateTimeField_((JsonObject) aDeal);
-		}
-		Buffer body = Buffer.buffer(deals.encode());
+	@Override public void report(JsonObject unitData, Handler<AsyncResult<Void>> completionHandler) {
+		convertDateTimeField_(unitData);
+		JsonArray unitDataAsArray = toArray_(unitData);
+		Buffer body = Buffer.buffer(unitDataAsArray.encode());
 		if (log.isDebugEnabled()) log.debug("body : " + body);
 		new Poster_(body).execute_(completionHandler);
 	}
 
+	private JsonArray toArray_(JsonObject obj) {
+		JsonArray result = new JsonArray();
+		for (String aKey : obj.fieldNames()) {
+			result.add(obj.getJsonObject(aKey));
+		}
+		return result;
+	}
+
 	/**
-	 * "DateTime" で終わる属性はすべて APIS プログラムの標準フォーマットの日時文字列のはずなので ISO フォーマットに変換する.
-	 * @param obj 変換対象 DEAL オブジェクト
+	 * "time" で終わる属性はすべて APIS プログラムの標準フォーマットの日時文字列のはずなので ISO フォーマットに変換する.
+	 * @param obj 変換対象 UNITDATA オブジェクト
 	 */
 	private void convertDateTimeField_(JsonObject obj) {
 		for (String aKey : obj.fieldNames()) {
 			Object aVal = obj.getValue(aKey);
 			if (aVal instanceof String) {
-				if (aKey.endsWith("DateTime") || aKey.equals("dateTime")) {
+				if (aKey.endsWith("time")) {
 					ZonedDateTime zdt = DateTimeUtil.toSystemDefaultZonedDateTime((String) aVal);
 					obj.put(aKey, DateTimeUtil.toISO8601OffsetString(zdt));
 				}
 			} else if (aVal instanceof JsonObject) {
 				convertDateTimeField_((JsonObject) aVal);
-			} else if (aVal instanceof JsonArray) {
-				for (Object anObj : (JsonArray) aVal) {
-					if (anObj instanceof JsonObject) {
-						convertDateTimeField_((JsonObject) anObj);
-					}
-				}
 			}
 		}
 	}
@@ -127,7 +122,7 @@ public class KnowledgeLineDealReportingImpl implements DealReporting.Impl {
 			});
 		}
 		private void post_(Handler<AsyncResult<Void>> completionHandler) {
-			Long requestTimeoutMsec = VertxConfig.config.getLong(DEFAULT_REQUEST_TIMEOUT_MSEC, "dealReporting", "requestTimeoutMsec");
+			Long requestTimeoutMsec = VertxConfig.config.getLong(DEFAULT_REQUEST_TIMEOUT_MSEC, "unitDataReporting", "requestTimeoutMsec");
 			client_.post(uri_, resPost -> {
 				if (log.isDebugEnabled()) log.debug("status : " + resPost.statusCode());
 				if (resPost.statusCode() == 200) {

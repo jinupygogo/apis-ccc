@@ -9,13 +9,13 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import jp.co.sony.csl.dcoes.apis.common.ServiceAddress;
 import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
-import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.kl_cc.KnowledgeLinePolicyAcquisitionImpl;
+import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post.HttpPostPolicyAcquisitionImpl;
 
 /**
  * 外部から POLICY を取得する Verticle.
  * {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle から起動される.
  * 内部からの要求に応じて外部から取得する.
- * 実際の取得処理は {@link KnowledgeLinePolicyAcquisitionImpl} で実装.
+ * 実際の取得処理は {@link HttpPostPolicyAcquisitionImpl} で実装.
  * @author OES Project
  */
 public class PolicyAcquisition extends AbstractVerticle {
@@ -37,7 +37,7 @@ public class PolicyAcquisition extends AbstractVerticle {
 		enabled_ = VertxConfig.config.getBoolean(Boolean.TRUE, "policyAcquisition", "enabled");
 		if (enabled_) {
 			if (log.isInfoEnabled()) log.info("policyAcquisition enabled");
-			impl_ = new KnowledgeLinePolicyAcquisitionImpl(vertx);
+			impl_ = new HttpPostPolicyAcquisitionImpl(vertx);
 		} else {
 			if (log.isInfoEnabled()) log.info("policyAcquisition disabled");
 		}

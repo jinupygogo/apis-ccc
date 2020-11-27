@@ -9,13 +9,13 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import jp.co.sony.csl.dcoes.apis.common.ServiceAddress;
 import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
-import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.kl_cc.KnowledgeLineScenarioAcquisitionImpl;
+import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post.HttpPostScenarioAcquisitionImpl;
 
 /**
  * 外部から SCENARIO を取得する Verticle.
  * {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle から起動される.
  * 内部からの要求に応じて外部から取得する.
- * 実際の取得処理は {@link KnowledgeLineScenarioAcquisitionImpl} で実装.
+ * 実際の取得処理は {@link HttpPostScenarioAcquisitionImpl} で実装.
  * @author OES Project
  */
 public class ScenarioAcquisition extends AbstractVerticle {
@@ -37,7 +37,7 @@ public class ScenarioAcquisition extends AbstractVerticle {
 		enabled_ = VertxConfig.config.getBoolean(Boolean.TRUE, "scenarioAcquisition", "enabled");
 		if (enabled_) {
 			if (log.isInfoEnabled()) log.info("scenarioAcquisition enabled");
-			impl_ = new KnowledgeLineScenarioAcquisitionImpl(vertx);
+			impl_ = new HttpPostScenarioAcquisitionImpl(vertx);
 		} else {
 			if (log.isInfoEnabled()) log.info("scenarioAcquisition disabled");
 		}

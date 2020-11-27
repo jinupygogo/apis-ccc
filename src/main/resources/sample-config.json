@@ -35,9 +35,9 @@
 		// type : 外部サービスの種類
 		//        値は以下のいずれか
 		//        - mongo_db : MongoDB に保存する
-		//        - kl_cc : ウェブサービスに HTTP POST する
+		//        - http_post : ウェブサービスに HTTP POST する
 		//        デフォルト : mongo_db
-		"type" : "kl_cc",
+		"type" : "http_post",
 		// periodMsec : 通知周期
 		//              型 : Long
 		//              デフォルト : 30000L
@@ -47,8 +47,8 @@
 		// port : 外部サービスのポート
 		//        型 : Integer
 		//        デフォルト : type が mongo_db なら 27017
-		//        デフォルト : type が kl_cc なら : ssl が false なら 80
-		//        デフォルト : type が kl_cc なら : ssl が true なら 443
+		//        デフォルト : type が http_post なら : ssl が false なら 80
+		//        デフォルト : type が http_post なら : ssl が true なら 443
 		"port" : 80,
 		// ssl : SSL フラグ
 		//       デフォルト : false
@@ -60,9 +60,9 @@
 		"database" : "apis_service_center",
 		// collection : MongoDB コレクション名 ( type が mongo_db の場合のみ )
 		"collection" : "deal",
-		// uri : 外部サービスの通知 URI ( type が kl_cc の場合のみ )
-		"uri" : "/cgi-bin/WebObjects/KnowledgeLineTEST.woa/wa/ApisDeal/save",
-		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間 ( type が kl_cc の場合のみ )
+		// uri : 外部サービスの通知 URI ( type が http_post の場合のみ )
+		"uri" : "/api/ApisDeal/save",
+		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間 ( type が http_post の場合のみ )
 		//                      型 : Long
 		//                      デフォルト : 5000L
 		"requestTimeoutMsec" : 5000
@@ -76,7 +76,7 @@
 		// type : 外部サービスの種類
 		//        値は以下のいずれか
 		//        - mongo_db : MongoDB に保存する
-		//        - kl_cc : ウェブサービスに HTTP POST する
+		//        - http_post : ウェブサービスに HTTP POST する
 		//        デフォルト : mongo_db
 		"type" : "mongo_db",
 		// periodMsec : 通知周期
@@ -88,8 +88,8 @@
 		// port : 外部サービスのポート
 		//        型 : Integer
 		//        デフォルト : type が mongo_db なら 27017
-		//        デフォルト : type が kl_cc なら : ssl が false なら 80
-		//        デフォルト : type が kl_cc なら : ssl が true なら 443
+		//        デフォルト : type が http_post なら : ssl が false なら 80
+		//        デフォルト : type が http_post なら : ssl が true なら 443
 		"port" : 27017,
 		// ssl : SSL フラグ
 		//       デフォルト : false
@@ -101,9 +101,9 @@
 		"database" : "apis_service_center",
 		// collection : MongoDB コレクション名 ( type が mongo_db の場合のみ )
 		"collection" : "unitData",
-		// uri : 外部サービスの通知 URI ( type が kl_cc の場合のみ )
-		"uri" : "/cgi-bin/WebObjects/KnowledgeLineTEST.woa/wa/ApisUnitData/save",
-		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間 ( type が kl_cc の場合のみ )
+		// uri : 外部サービスの通知 URI ( type が http_post の場合のみ )
+		"uri" : "/api/ApisUnitData/save",
+		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間 ( type が http_post の場合のみ )
 		//                      型 : Long
 		//                      デフォルト : 5000L
 		"requestTimeoutMsec" : 5000
@@ -128,7 +128,7 @@
 		//               デフォルト : false
 		"sslTrustAll" : false,
 		// uri : 外部サービスの通知 URI
-		"uri" : "/cgi-bin/WebObjects/KnowledgeLineTEST.woa/wa/ApisScenario/getCurrent",
+		"uri" : "/api/ApisScenario/getCurrent",
 		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間
 		//                      型 : Long
 		//                      デフォルト : 5000L
@@ -154,7 +154,7 @@
 		//               デフォルト : false
 		"sslTrustAll" : false,
 		// uri : 外部サービスの通知 URI
-		"uri" : "/empty",
+		"uri" : "/api/ApisPolicy/getCurrent",
 		// requestTimeoutMsec : HTTP リクエストのタイムアウト時間
 		//                      型 : Long
 		//                      デフォルト : 5000L

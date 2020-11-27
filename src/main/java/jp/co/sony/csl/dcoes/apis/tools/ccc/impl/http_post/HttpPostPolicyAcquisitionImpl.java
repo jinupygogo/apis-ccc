@@ -1,4 +1,4 @@
-package jp.co.sony.csl.dcoes.apis.tools.ccc.impl.kl_cc;
+package jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -12,15 +12,15 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import jp.co.sony.csl.dcoes.apis.common.util.StringUtil;
 import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
-import jp.co.sony.csl.dcoes.apis.tools.ccc.ScenarioAcquisition;
+import jp.co.sony.csl.dcoes.apis.tools.ccc.PolicyAcquisition;
 
 /**
- * KnowledgeLine から SCENARIO を取得する実装.
- * {@link ScenarioAcquisition} で使用される.
+ * ウェブサービスに対して HTTP POST で POLICY を取得する実装.
+ * {@link PolicyAcquisition} で使用される.
  * @author OES Project
  */
-public class KnowledgeLineScenarioAcquisitionImpl implements ScenarioAcquisition.Impl {
-	private static final Logger log = LoggerFactory.getLogger(KnowledgeLineScenarioAcquisitionImpl.class);
+public class HttpPostPolicyAcquisitionImpl implements PolicyAcquisition.Impl {
+	private static final Logger log = LoggerFactory.getLogger(HttpPostPolicyAcquisitionImpl.class);
 
 	/**
 	 * HTTP 接続のタイムアウトのデフォルト値 [ms].
@@ -35,21 +35,21 @@ public class KnowledgeLineScenarioAcquisitionImpl implements ScenarioAcquisition
 	/**
 	 * インスタンスを作成する.
 	 * CONFIG から設定を取得し初期化する.
-	 * - CONFIG.scenarioAcquisition.host : 接続先ホスト名 [{@link String}]
-	 * - CONFIG.scenarioAcquisition.ssl : SSL フラグ [{@link Boolean}]
-	 * - CONFIG.scenarioAcquisition.sslTrustAll : SSL なんでも OK フラグ [{@link Boolean}]
-	 * - CONFIG.scenarioAcquisition.port : 接続先ポート [{@link Integer}].
-	 *                                     設定がない場合 SSL なら 443, そうでなければ 80.
-	 * - CONFIG.scenarioAcquisition.uri : 接続先 URI [{@link String}]
+	 * - CONFIG.policyAcquisition.host : 接続先ホスト名 [{@link String}]
+	 * - CONFIG.policyAcquisition.ssl : SSL フラグ [{@link Boolean}]
+	 * - CONFIG.policyAcquisition.sslTrustAll : SSL なんでも OK フラグ [{@link Boolean}]
+	 * - CONFIG.policyAcquisition.port : 接続先ポート [{@link Integer}].
+	 *                                   設定がない場合 SSL なら 443, そうでなければ 80.
+	 * - CONFIG.policyAcquisition.uri : 接続先 URI [{@link String}]
 	 * @param vertx vertx オブジェクト
 	 */
-	public KnowledgeLineScenarioAcquisitionImpl(Vertx vertx) {
+	public HttpPostPolicyAcquisitionImpl(Vertx vertx) {
 		vertx_ = vertx;
-		String host = VertxConfig.config.getString("scenarioAcquisition", "host");
-		Boolean isSsl = VertxConfig.config.getBoolean(false, "scenarioAcquisition", "ssl");
-		Integer port = (isSsl) ? VertxConfig.config.getInteger(443, "scenarioAcquisition", "port") : VertxConfig.config.getInteger(80, "scenarioAcquisition", "port");
-		Boolean sslTrustAll = VertxConfig.config.getBoolean(false, "scenarioAcquisition", "sslTrustAll");
-		uri_ = VertxConfig.config.getString("scenarioAcquisition", "uri");
+		String host = VertxConfig.config.getString("policyAcquisition", "host");
+		Boolean isSsl = VertxConfig.config.getBoolean(false, "policyAcquisition", "ssl");
+		Integer port = (isSsl) ? VertxConfig.config.getInteger(443, "policyAcquisition", "port") : VertxConfig.config.getInteger(80, "policyAcquisition", "port");
+		Boolean sslTrustAll = VertxConfig.config.getBoolean(false, "policyAcquisition", "sslTrustAll");
+		uri_ = VertxConfig.config.getString("policyAcquisition", "uri");
 		if (log.isInfoEnabled()) log.info("host : " + host);
 		if (log.isInfoEnabled()) log.info("port : " + port);
 		if (isSsl) if (log.isInfoEnabled()) log.info("sslTrustAll : " + sslTrustAll);
@@ -96,7 +96,7 @@ public class KnowledgeLineScenarioAcquisitionImpl implements ScenarioAcquisition
 			});
 		}
 		private void post_(Handler<AsyncResult<JsonObject>> completionHandler) {
-			Long requestTimeoutMsec = VertxConfig.config.getLong(DEFAULT_REQUEST_TIMEOUT_MSEC, "scenarioAcquisition", "requestTimeoutMsec");
+			Long requestTimeoutMsec = VertxConfig.config.getLong(DEFAULT_REQUEST_TIMEOUT_MSEC, "policyAcquisition", "requestTimeoutMsec");
 			client_.post(uri_, resPost -> {
 				if (log.isDebugEnabled()) log.debug("status : " + resPost.statusCode());
 				if (resPost.statusCode() == 200) {

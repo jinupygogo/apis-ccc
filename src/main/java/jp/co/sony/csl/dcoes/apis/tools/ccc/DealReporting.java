@@ -12,7 +12,7 @@ import jp.co.sony.csl.dcoes.apis.common.Deal;
 import jp.co.sony.csl.dcoes.apis.common.ServiceAddress;
 import jp.co.sony.csl.dcoes.apis.common.util.vertx.JsonObjectUtil;
 import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
-import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.kl_cc.KnowledgeLineDealReportingImpl;
+import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post.HttpPostDealReportingImpl;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.mongo_db.MongoDBDealReportingImpl;
 
 /**
@@ -20,7 +20,7 @@ import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.mongo_db.MongoDBDealReportingImp
  * {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle から起動される.
  * 一定時間ごとに Mediator から融通情報を取得し通知する.
  * 実際の通知処理は以下の 2 つ.
- * - {@code CONFIG.dealReporting.type} が {@code kl_cc} : {@link KnowledgeLineDealReportingImpl}
+ * - {@code CONFIG.dealReporting.type} が {@code http_post} : {@link HttpPostDealReportingImpl}
  * - {@code CONFIG.dealReporting.type} が {@code mongo_db} : {@link MongoDBDealReportingImpl}
  * @author OES Project
  */
@@ -61,8 +61,8 @@ public class DealReporting extends AbstractVerticle {
 			String type = VertxConfig.config.getString(DEFAULT_DEAL_REPORTING_TYPE, "dealReporting", "type");
 			try {
 				switch (type) {
-				case "kl_cc":
-					impl_ = new KnowledgeLineDealReportingImpl(vertx);
+				case "http_post":
+					impl_ = new HttpPostDealReportingImpl(vertx);
 					break;
 				case "mongo_db":
 					impl_ = new MongoDBDealReportingImpl(vertx);
