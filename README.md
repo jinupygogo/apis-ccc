@@ -1,12 +1,7 @@
 # apis-ccc
 
 ## Introduction
-apis-cccは運用保守等を目的として電力融通に関わる情報をサーバ等の外部Serviceにアップロードし、  
-各ノードの設定ファイルをサーバからダウンロードするクライアントソフトウェアである。  
-apis-cccはEthernet等のコミュニケーションラインに接続された複数のノード上のapis-mainから情報を  
-取得するためにVert.x, Hazelcastのフレームワーク機能を用いてクラスタを構築する。  
-そしてクラスタ内に存在するGrid Masterから全ノードのハードウェア情報、apis-mainに関係する  
-ソフトウェア情報、ノード固有情報等を取得し、任意のノードから電力融通情報を取得する。  
+apis-ccc is client software for uploading information that is related to energy sharing to external services such as a server and downloading node configuration files from a server for operation and maintenance. It constructs clusters by using the functions of the Vert.x and Hazelcast frameworks to obtain information from apis-main that is running on multiple nodes that are connected via Ethernet or other communication lines. From the Grid Master in the cluster, it then obtains information on the hardware of each node, software information related to apis-main, and node-specific information. In that way, information on any node can be obtained. apis-ccc also has a function for downloading configuration files upon request from apis-main.
 
 
 ![キャプチャ](https://user-images.githubusercontent.com/71874910/95824505-5f35fc00-0d6a-11eb-8eb5-90fe79539d8a.PNG)
@@ -46,7 +41,7 @@ $ bash stop.sh
 
 ## Parameter Setting
 Set the following file parameters in the exe folder as necessary.   
-Refer to "Chapter 7, About Configuration Files" in the [apis-ccc_specification](#anchor1) for more information.
+Refer to "Chapter 6, Configuration Files" in the [apis-ccc_specification](#anchor1) for more information.
 
 &emsp;config.json   
 &emsp;&emsp;&emsp;- communityId   &emsp;(default : oss_communityId)  
