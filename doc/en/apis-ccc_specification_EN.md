@@ -1,4 +1,4 @@
-**apis-ccc Specification Document**
+**apis-ccc Specification**
 =====
 **Rev 0.63**
 
