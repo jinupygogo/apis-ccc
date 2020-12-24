@@ -59,7 +59,8 @@ Refer to "Chapter 6, Configuration Files" in the [apis-ccc_specification](#ancho
 
 <a id="anchor1"></a>
 ## Documentation
-
+&emsp;[apis-mian_ccc_specification(EN)](https://github.com/SonyCSL/apis-ccc/blob/main/doc/en/apis-ccc_specification_EN.md)  
+&emsp;[apis-mian_ccc_specification(JP)](https://github.com/SonyCSL/apis-ccc/blob/main/doc/jp/apis-ccc_specification_JP.md)
 
 
 ## License
