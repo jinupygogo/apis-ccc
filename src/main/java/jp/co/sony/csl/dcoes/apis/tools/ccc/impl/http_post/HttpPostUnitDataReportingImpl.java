@@ -19,7 +19,10 @@ import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.UnitDataReporting;
 
 /**
- * ウェブサービスに対して HTTP POST でユニットデータを通知する実装.
+ * Implements reporting of unit data via HTTP POST for web service.
+ * Used in {@link UnitDataReporting} 
+ * @author OES Project
+ * ウェブサービスに対して HTTP POST でユニットデータを通知する実装. 
  * {@link UnitDataReporting} で使用される.
  * @author OES Project
  */
@@ -27,6 +30,8 @@ public class HttpPostUnitDataReportingImpl implements UnitDataReporting.Impl {
 	private static final Logger log = LoggerFactory.getLogger(HttpPostUnitDataReportingImpl.class);
 
 	/**
+	 * This is the default HTTP connection timeout value [ms].
+	 * The value is {@value}.
 	 * HTTP 接続のタイムアウトのデフォルト値 [ms].
 	 * 値は {@value}.
 	 */
@@ -37,6 +42,15 @@ public class HttpPostUnitDataReportingImpl implements UnitDataReporting.Impl {
 	private String uri_;
 
 	/**
+	 * Creates instance.
+	 * Gets settings from CONFIG and initializes.
+	 * - CONFIG.unitDataReporting.host : Connection destination host name [{@link String}]
+	 * - CONFIG.unitDataReporting.ssl : SSL flag  [{@link Boolean}]
+	 * - CONFIG.unitDataReporting.sslTrustAll : OK flag [{@link Boolean}] for any SSL
+	 * - CONFIG.unitDataReporting.port : Connection destination port [{@link Integer}].
+	 *                                   If there are no settings, 443 for SSL, 80 for all else.
+	 * - CONFIG.unitDataReporting.uri : Connection destination URI [{@link String}]
+	 * @param vertx vertx object
 	 * インスタンスを作成する.
 	 * CONFIG から設定を取得し初期化する.
 	 * - CONFIG.unitDataReporting.host : 接続先ホスト名 [{@link String}]
@@ -81,6 +95,8 @@ public class HttpPostUnitDataReportingImpl implements UnitDataReporting.Impl {
 	}
 
 	/**
+	 * Converts all attributes ending with "time" to ISO format because they should be datetime strings in the standard format for the APIS program.
+	 * @param obj DEAL object to convert
 	 * "time" で終わる属性はすべて APIS プログラムの標準フォーマットの日時文字列のはずなので ISO フォーマットに変換する.
 	 * @param obj 変換対象 UNITDATA オブジェクト
 	 */
@@ -107,6 +123,8 @@ public class HttpPostUnitDataReportingImpl implements UnitDataReporting.Impl {
 			body_ = body;
 		}
 		/**
+		 * Executes HTTP POST processing.
+		 * (Maybe because of poor implementation) The result may be returned twice, so this is blocked here.
 		 * HTTP POST 処理実行.
 		 * ( 実装がまずいのか ) 二度結果が返ってくることがあるためここでブロックする.
 		 * @param completionHandler the completion handler

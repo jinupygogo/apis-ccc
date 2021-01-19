@@ -12,11 +12,17 @@ import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post.HttpPostScenarioAcquisitionImpl;
 
 /**
+ * This Verticle gets POLICY from the outside.
+ * It is started from {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle.
+ * Gets SCENARIO from the outside as needed in response to internal requests.
+ * Actual acquistion processing is implemented in {@link HttpPostScenarioAcquisitionImpl}.
+ * @author OES Project
  * 外部から SCENARIO を取得する Verticle.
  * {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle から起動される.
  * 内部からの要求に応じて外部から取得する.
  * 実際の取得処理は {@link HttpPostScenarioAcquisitionImpl} で実装.
  * @author OES Project
+
  */
 public class ScenarioAcquisition extends AbstractVerticle {
 	private static final Logger log = LoggerFactory.getLogger(ScenarioAcquisition.class);
@@ -25,6 +31,13 @@ public class ScenarioAcquisition extends AbstractVerticle {
 	private boolean enabled_ = false;
 
 	/**
+	 * Called during startup.
+	 * Gets settings from CONFIG and initializes.
+	 * - {@code CONFIG.scenarioAcquisition.enabled}
+	 * Prepares the object to be implemented.
+	 * Starts {@link io.vertx.core.eventbus.EventBus} service. 
+	 * @param startFuture {@inheritDoc}
+	 * @throws Exception {@inheritDoc}
 	 * 起動時に呼び出される.
 	 * CONFIG から設定を取得し初期化する.
 	 * - {@code CONFIG.scenarioAcquisition.enabled}
@@ -53,6 +66,8 @@ public class ScenarioAcquisition extends AbstractVerticle {
 	}
 
 	/**
+	 * Called when stopped.
+	 * @throws Exception {@inheritDoc}
 	 * 停止時に呼び出される.
 	 * @throws Exception {@inheritDoc}
 	 */
@@ -63,6 +78,19 @@ public class ScenarioAcquisition extends AbstractVerticle {
 	////
 
 	/**
+	 * Starts {@link io.vertx.core.eventbus.EventBus} service.
+	 * Address : {@link ServiceAddress.ControlCenterClient#scenario()}
+	 * Scope : Global
+	 * Processing : Gets SCENARIO from Service Center.
+	 * 　　   account, password, unitId are required.
+	 * Message body : None
+	 * Message header :
+	 * 　　　　　　　　   - {@code "account"} : Account
+	 * 　　　　　　　　   - {@code "password"} : Password
+	 * 　　　　　　　　   - {@code "unitId"} : Unit ID
+	 * Responses :Acquired SCENARIO information [{@link JsonObject}].
+	 * 　　　　　   Fail if error occurs.
+	 * @param completionHandler The completion handler
 	 * {@link io.vertx.core.eventbus.EventBus} サービス起動.
 	 * アドレス : {@link ServiceAddress.ControlCenterClient#scenario()}
 	 * 範囲 : グローバル
@@ -101,11 +129,19 @@ public class ScenarioAcquisition extends AbstractVerticle {
 	////
 
 	/**
+	 * This is the interface for calling the object to be implemented for the acquisition process.
+	 * @author OES Project
 	 * 取得処理の実装オブジェクトを呼び出すためのインタフェイス.
 	 * @author OES Project
 	 */
 	public interface Impl {
 		/**
+		 * Gets SCENARIO.
+		 * To be received by completionHandler's {@link AsyncResult#result()}.
+		 * @param account Verified account for Service Center
+		 * @param password Verified password for Service Center 
+		 * @param unitId Unit ID
+		 * @param completionHandler The completion handler
 		 * SCENARIO を取得する.
 		 * completionHandler の {@link AsyncResult#result()} で受け取る.
 		 * @param account Service Center の認証アカウント

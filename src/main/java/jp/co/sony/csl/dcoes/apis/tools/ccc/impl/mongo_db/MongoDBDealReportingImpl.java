@@ -20,6 +20,9 @@ import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.DealReporting;
 
 /**
+ * Implements direct storing of Power Sharing information in MongoDB.
+ * Used in {@link DealReporting}.
+ * @author OES Project
  * MongoDB に対して融通情報を直接保存する実装.
  * {@link DealReporting} で使用される.
  * @author OES Project
@@ -37,6 +40,21 @@ public class MongoDBDealReportingImpl implements DealReporting.Impl {
 	private static String collection_ = null;
 
 	/**
+	 * Creates instance.
+	 * Gets settings from CONFIG and initializes.
+	 * - CONFIG.dealReporting.host : Connection destination host name [{@link String}].
+	 *                               Default : localhost.
+	 * - CONFIG.dealReporting.port : Connection destination port [{@link String}].
+	 *                               Default : 27017.
+	 * - CONFIG.dealReporting.ssl : SSL flag [{@link Boolean}].
+	 *                              Default : false.
+	 * - CONFIG.dealReporting.sslTrustAll : OK flag [{@link Boolean}] for any SSL.
+	 *                                      Default : false.
+	 * - CONFIG.dealReporting.database : Database name [{@link String}].
+	 *                                   Required.
+	 * - CONFIG.dealReporting.collection : Collection name [{@link String}].
+	 *                                     Required.
+	 * @param vertx vertx object
 	 * インスタンスを作成する.
 	 * CONFIG から設定を取得し初期化する.
 	 * - CONFIG.dealReporting.host : 接続先ホスト名 [{@link String}].
@@ -120,6 +138,8 @@ public class MongoDBDealReportingImpl implements DealReporting.Impl {
 	}
 
 	/**
+	 * Converts all attributes ending with "DateTime" to ISO format because they should be datetime strings in the standard format for the APIS program.
+	 * @param obj DEAL object to convert.
 	 * "DateTime" で終わる属性はすべて APIS プログラムの標準フォーマットの日時文字列のはずなので ISO フォーマットに変換してあれする.
 	 * @param obj 変換対象 DEAL オブジェクト
 	 */

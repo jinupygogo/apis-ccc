@@ -10,6 +10,14 @@ import jp.co.sony.csl.dcoes.apis.tools.ccc.ScenarioAcquisition;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.UnitDataReporting;
 
 /**
+ * These are the main Verticles of apis-ccc.
+ * They are specified in maven-shade-plugin's {@literal <Main-Verticle>} in pom.xml.
+ * Starts the following Verticles.
+ * - {@link DealReporting} : Verticle that reports Power Sharing information to the outside
+ * - {@link UnitDataReporting} : Verticle that reports unit data to the outside
+ * - {@link ScenarioAcquisition} : Verticle that gets SCENARIO from the outside 
+ * - {@link PolicyAcquisition} : Verticle that gets POLICY from the outside
+ * @author OES Project
  * apis-ccc の親玉 Verticle.
  * pom.xml の maven-shade-plugin の {@literal <Main-Verticle>} で指定してある.
  * 以下の Verticle を起動する.
@@ -22,6 +30,7 @@ import jp.co.sony.csl.dcoes.apis.tools.ccc.UnitDataReporting;
 public class Starter extends AbstractStarter {
 
 	/**
+	 * Called from {@link AbstractStarter#start(Future)} during startup.
 	 * 起動時に {@link AbstractStarter#start(Future)} から呼び出される.
 	 */
 	@Override protected void doStart(Handler<AsyncResult<Void>> completionHandler) {

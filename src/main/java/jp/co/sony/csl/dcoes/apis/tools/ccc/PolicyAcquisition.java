@@ -12,6 +12,11 @@ import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post.HttpPostPolicyAcquisitionImpl;
 
 /**
+ * This Verticle gets POLICY from the outside.
+ * It is started from {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle.
+ * Gets POLICY from the outside as needed in response to internal requests.
+ * Actual acquistion processing is implemented in {@link HttpPostPolicyAcquisitionImpl}.
+ * @author OES Project
  * 外部から POLICY を取得する Verticle.
  * {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle から起動される.
  * 内部からの要求に応じて外部から取得する.
@@ -25,7 +30,14 @@ public class PolicyAcquisition extends AbstractVerticle {
 	private boolean enabled_ = false;
 
 	/**
-	 * 起動時に呼び出される.
+	 * Called during startup.
+	 * Gets settings from CONFIG and initializes.
+	 * - {@code CONFIG.policyAcquisition.enabled}
+	 * Prepares the object to be implemented.
+	 * Starts {@link io.vertx.core.eventbus.EventBus} service.
+	 * @param startFuture {@inheritDoc}
+	 * @throws Exception {@inheritDoc}
+ 	 * 起動時に呼び出される.
 	 * CONFIG から設定を取得し初期化する.
 	 * - {@code CONFIG.policyAcquisition.enabled}
 	 * 実装オブジェクトを用意する.
@@ -53,6 +65,8 @@ public class PolicyAcquisition extends AbstractVerticle {
 	}
 
 	/**
+	 * Called when stopped.
+	 * @throws Exception {@inheritDoc}
 	 * 停止時に呼び出される.
 	 * @throws Exception {@inheritDoc}
 	 */
@@ -63,6 +77,19 @@ public class PolicyAcquisition extends AbstractVerticle {
 	////
 
 	/**
+	 * Starts {@link io.vertx.core.eventbus.EventBus} service.
+	 * Address : {@link ServiceAddress.ControlCenterClient#policy()}
+	 * Scope : Global
+	 * Processing : Gets POLICY from Service Center.
+	 * 　　   account, password, unitId are required.
+	 * Message body : None
+	 * Message header :
+	 * 　　　　　　　　   - {@code "account"} : Account
+	 * 　　　　　　　　   - {@code "password"} : Password
+	 * 　　　　　　　　   - {@code "unitId"} : Unit ID
+	 * Responses : Acquired POLICY information [{@link JsonObject}].
+	 * 　　　　　   Fail if error occurs.
+	 * @param completionHandler The completion handler
 	 * {@link io.vertx.core.eventbus.EventBus} サービス起動.
 	 * アドレス : {@link ServiceAddress.ControlCenterClient#policy()}
 	 * 範囲 : グローバル
@@ -101,11 +128,19 @@ public class PolicyAcquisition extends AbstractVerticle {
 	////
 
 	/**
+	 * This is the interface for calling the object to be implemented for the acquisition process.
+	 * @author OES Project
 	 * 取得処理の実装オブジェクトを呼び出すためのインタフェイス.
 	 * @author OES Project
 	 */
 	public interface Impl {
 		/**
+		 * Gets POLICY.
+		 * To be received by completionHandler's {@link AsyncResult#result()}.
+		 * @param account Verified account for Service Center
+		 * @param password Verified password for Service Center 
+		 * @param unitId Unit ID
+		 * @param completionHandler The completion handler
 		 * POLICY を取得する.
 		 * completionHandler の {@link AsyncResult#result()} で受け取る.
 		 * @param account Service Center の認証アカウント

@@ -15,6 +15,9 @@ import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.ScenarioAcquisition;
 
 /**
+ * Implements acquisition of SCENARIO via HTTP POST for web service.
+ * Used in {@link ScenarioAcquisition}.
+ * @author OES Project
  * ウェブサービスに対して HTTP POST で SCENARIO を取得する実装.
  * {@link ScenarioAcquisition} で使用される.
  * @author OES Project
@@ -23,6 +26,8 @@ public class HttpPostScenarioAcquisitionImpl implements ScenarioAcquisition.Impl
 	private static final Logger log = LoggerFactory.getLogger(HttpPostScenarioAcquisitionImpl.class);
 
 	/**
+	 * This is the default HTTP connection timeout value [ms].
+	 * The value is {@value}.
 	 * HTTP 接続のタイムアウトのデフォルト値 [ms].
 	 * 値は {@value}.
 	 */
@@ -33,6 +38,15 @@ public class HttpPostScenarioAcquisitionImpl implements ScenarioAcquisition.Impl
 	private String uri_;
 
 	/**
+	 * Creates instance.
+	 * Gets settings from CONFIG and initializes. 
+	 * - CONFIG.scenarioAcquisition.host : Connection destination host name [{@link String}]
+	 * - CONFIG.scenarioAcquisition.ssl : SSL flag [{@link Boolean}]
+	 * - CONFIG.scenarioAcquisition.sslTrustAll : OK flag [{@link Boolean}] for any SSL
+	 * - CONFIG.scenarioAcquisition.port : Connection destination port [{@link Integer}].
+	 *                                     If there are no settings, 443 for SSL, 80 for all else.
+	 * - CONFIG.scenarioAcquisition.uri : Connection URI [{@link String}]
+	 * @param vertx vertx object
 	 * インスタンスを作成する.
 	 * CONFIG から設定を取得し初期化する.
 	 * - CONFIG.scenarioAcquisition.host : 接続先ホスト名 [{@link String}]
@@ -81,6 +95,9 @@ public class HttpPostScenarioAcquisitionImpl implements ScenarioAcquisition.Impl
 			body_ = body;
 		}
 		/**
+		 * Executes HTTP POST processing.
+		 * (Maybe because of poor implementation) The result may be returned twice, so this is blocked here.
+		 * @param completionHandler The completion handler
 		 * HTTP POST 処理実行.
 		 * ( 実装がまずいのか ) 二度結果が返ってくることがあるためここでブロックする.
 		 * @param completionHandler the completion handler

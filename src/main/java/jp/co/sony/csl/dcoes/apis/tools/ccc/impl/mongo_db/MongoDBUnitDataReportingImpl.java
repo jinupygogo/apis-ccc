@@ -18,6 +18,9 @@ import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.UnitDataReporting;
 
 /**
+ * Implements direct storing of unit data in MongoDB.
+ * Used in {@link UnitDataReporting}.
+ * @author OES Project
  * MongoDB に対してユニットデータを直接保存する実装.
  * {@link UnitDataReporting} で使用される.
  * @author OES Project
@@ -35,6 +38,21 @@ public class MongoDBUnitDataReportingImpl implements UnitDataReporting.Impl {
 	private static String collection_ = null;
 
 	/**
+	 * Creates instance.
+	 * Gets settings from CONFIG and initializes.
+	 * - CONFIG.unitDataReporting.host : Connection destination host name [{@link String}].
+	 *                                   Default : localhost.
+	 * - CONFIG.unitDataReporting.port : Connection destination port [{@link Integer}].
+	 *                                   Default : 27017.
+	 * - CONFIG.unitDataReporting.ssl : SSL flag [{@link Boolean}].
+	 *                                  Default : false.
+	 * - CONFIG.unitDataReporting.sslTrustAll : OK flag [{@link Boolean}] for any SSL.
+	 *                                          Default : false.
+	 * - CONFIG.unitDataReporting.database : Database name [{@link String}].
+	 *                                       Required.
+	 * - CONFIG.unitDataReporting.collection : Collection name [{@link String}].
+	 *                                         Required.
+	 * @param vertx vertx object
 	 * インスタンスを作成する.
 	 * CONFIG から設定を取得し初期化する.
 	 * - CONFIG.unitDataReporting.host : 接続先ホスト名 [{@link String}].
@@ -106,6 +124,8 @@ public class MongoDBUnitDataReportingImpl implements UnitDataReporting.Impl {
 	}
 
 	/**
+	 * Converts all attributes ending with "time" to ISO format because they should be datetime strings in the standard format for the APIS program.
+	 * @param obj 変換対象 DEAL object to convert.
 	 * "time" で終わる属性はすべて APIS プログラムの標準フォーマットの日時文字列のはずなので ISO フォーマットに変換してあれする.
 	 * @param obj 変換対象 DEAL オブジェクト
 	 */

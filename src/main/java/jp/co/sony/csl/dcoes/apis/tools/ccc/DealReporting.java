@@ -16,6 +16,13 @@ import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post.HttpPostDealReportingI
 import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.mongo_db.MongoDBDealReportingImpl;
 
 /**
+ * This Verticle reports Power Sharing information to the outside.
+ * It is started from  {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle.
+ * At regular intervals, the verticle obtains Power Sharing information from Mediator and carries out reporting.
+ * The actual reporting process has two types below.
+ * - If {@code CONFIG.dealReporting.type} is {@code http_post} : {@link HttpPostDealReportingImpl}
+ * - If {@code CONFIG.dealReporting.type} is {@code mongo_db} : {@link MongoDBDealReportingImpl}
+ * @author OES Project
  * 融通情報を外部に通知する Verticle.
  * {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle から起動される.
  * 一定時間ごとに Mediator から融通情報を取得し通知する.
@@ -28,11 +35,15 @@ public class DealReporting extends AbstractVerticle {
 	private static final Logger log = LoggerFactory.getLogger(DealReporting.class);
 
 	/**
+	 * Sets the default value of the reporting cycle in [ms] unit.
+	 * The value is {@value}
 	 * 通知周期のデフォルト値 [ms].
 	 * 値は {@value}
 	 */
 	private static final Long DEFAULT_DEAL_REPORTING_PERIOD_MSEC = 30000L;
 	/**
+	 * Sets the default value of the reporting period.
+	 * The value is {@value}
 	 * 通知方式のデフォルト値.
 	 * 値は {@value}
 	 */
@@ -43,7 +54,16 @@ public class DealReporting extends AbstractVerticle {
 	private long dealReportingTimerId_ = 0L;
 	private boolean stopped_ = false;
 
-	/**
+ 	/**
+	 * Called during startup.
+	 * Gets settings from CONFIG and initializes.
+	 * - {@code CONFIG.dealReporting.enabled}
+	 * - {@code CONFIG.dealReporting.type}
+	 * Prepares the object to be implemented.
+	 * Starts {@link io.vertx.core.eventbus.EventBus} service.
+	 * Starts the timer.
+	 * @param startFuture {@inheritDoc}
+	 * @throws Exception {@inheritDoc}
 	 * 起動時に呼び出される.
 	 * CONFIG から設定を取得し初期化する.
 	 * - {@code CONFIG.dealReporting.enabled}
@@ -54,6 +74,7 @@ public class DealReporting extends AbstractVerticle {
 	 * @param startFuture {@inheritDoc}
 	 * @throws Exception {@inheritDoc}
 	 */
+
 	@Override public void start(Future<Void> startFuture) throws Exception {
 		enabled_ = VertxConfig.config.getBoolean(Boolean.TRUE, "dealReporting", "enabled");
 		if (enabled_) {
@@ -92,6 +113,9 @@ public class DealReporting extends AbstractVerticle {
 	}
 
 	/**
+	 * Called when stopping.
+	 * Sets a flag for stopping the timer.
+	 * @throws Exception {@inheritDoc}
 	 * 停止時に呼び出される.
 	 * タイマを止めるためのフラグを立てる.
 	 * @throws Exception {@inheritDoc}
@@ -104,6 +128,16 @@ public class DealReporting extends AbstractVerticle {
 	////
 
 	/**
+	 * Starts {@link io.vertx.core.eventbus.EventBus} service.
+	 * Address : {@link ServiceAddress.Mediator#dealLogging()}
+	 * Scope : Global
+	 * Process : Reports Power Sharing information to Service Center.
+	 * Message body : Power Sharing information [{@link JsonObject}]
+	 * Message header : None
+	 * Response : {@code "ok"} if the reporting function is enabled.
+	 * 　　　　　   {@code "N/A"} if the reporting function is disabled.
+	 * 　　　　　   Fail if and error occurs.
+	 * @param completionHandler The completion handler
 	 * {@link io.vertx.core.eventbus.EventBus} サービス起動.
 	 * アドレス : {@link ServiceAddress.Mediator#dealLogging()}
 	 * 範囲 : グローバル
@@ -120,8 +154,10 @@ public class DealReporting extends AbstractVerticle {
 			if (enabled_) {
 				JsonObject deal = req.body();
 				if (deal != null && Deal.isSaveworthy(deal)) {
+					// Adds community ID and cluster ID
 					// コミュニティ ID とクラスタ ID を追加する
 					deal.put("communityId", VertxConfig.communityId()).put("clusterId", VertxConfig.clusterId());
+					// Adds reporting time (actual UNIX time)
 					// 通知時間 ( 実時間の UNIX 時間 ) を追加する
 					long now = System.currentTimeMillis() / 1000;
 					if (log.isDebugEnabled()) log.debug("reportTime : " + now);
@@ -146,6 +182,7 @@ public class DealReporting extends AbstractVerticle {
 	////
 
 	/**
+	 * Sets the timer with the default time.
 	 * デフォルト時間でタイマをセットする.
 	 */
 	private void setDealReportingTimer_() {
@@ -153,6 +190,8 @@ public class DealReporting extends AbstractVerticle {
 		setDealReportingTimer_(delay);
 	}
 	/**
+	 * Sets the timer with the time specified by {@code delay}.
+	 * @param delay Time set by timer [ms]
 	 * {@code delay} で指定した時間でタイマをセットする.
 	 * @param delay タイマ設定時間 [ms]
 	 */
@@ -160,6 +199,8 @@ public class DealReporting extends AbstractVerticle {
 		dealReportingTimerId_ = vertx.setTimer(delay, this::dealReportingTimerHandler_);
 	}
 	/**
+	 * This process is called by the timer.
+	 * @param timerId Timer ID
 	 * タイマから呼び出される処理.
 	 * @param timerId タイマ ID
 	 */
@@ -176,6 +217,7 @@ public class DealReporting extends AbstractVerticle {
 				if (result != null) {
 					if (log.isInfoEnabled()) log.info("size of result : " + result.size());
 					if (!result.isEmpty()) {
+						// Discards DEAL information that does not need to be recorded
 						// 記録する必要のない DEAL 情報を捨てる
 						JsonArray filtered = new JsonArray();
 						for (Object aDeal : result) {
@@ -190,8 +232,10 @@ public class DealReporting extends AbstractVerticle {
 						long now = System.currentTimeMillis() / 1000;
 						if (log.isDebugEnabled()) log.debug("reportTime : " + now);
 						for (Object aDeal : result) {
+							// Adds community ID and cluster ID
 							// コミュニティ ID とクラスタ ID を追加する
 							((JsonObject) aDeal).put("communityId", VertxConfig.communityId()).put("clusterId", VertxConfig.clusterId());
+							// Adds reporting time (actual UNIX time)
 							// 通知時間 ( 実時間の UNIX 時間 ) を追加する
 							((JsonObject) aDeal).put("reportTime", now);
 						}
@@ -220,17 +264,25 @@ public class DealReporting extends AbstractVerticle {
 	////
 
 	/**
+	 * This is the interface for calling the object to be implemented for the reporting process.
+	 * @author OES Project
 	 * 通知処理の実装オブジェクトを呼び出すためのインタフェイス.
 	 * @author OES Project
 	 */
 	public interface Impl {
 		/**
+		 * Sends one Power Sharing information report.
+		 * @param deal Power Sharing information {@link JsonObject}
+		 * @param completionHandler The completion handler
 		 * 融通情報を一つ通知する.
 		 * @param deal 融通情報 {@link JsonObject}
 		 * @param completionHandler the completion handler
 		 */
 		void report(JsonObject deal, Handler<AsyncResult<Void>> completionHandler);
 		/**
+		 * Sends several Power Sharing information reports at once.
+		 * @param deals Array {@link JsonArray} of Power Sharing information {@link JsonObject}
+		 * @param completionHandler The completion handler		
 		 * 複数の融通情報を一度に通知する.
 		 * @param deals 融通情報 {@link JsonObject} の配列 {@link JsonArray}
 		 * @param completionHandler the completion handler

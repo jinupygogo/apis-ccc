@@ -19,6 +19,9 @@ import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.DealReporting;
 
 /**
+ * Implements reporting of Power Sharing information via HTTP Post to web service. 
+ * Used by {@link DealReporting}.
+ * @author OES Project
  * ウェブサービスに対して HTTP POST で融通情報を通知する実装.
  * {@link DealReporting} で使用される.
  * @author OES Project
@@ -27,6 +30,8 @@ public class HttpPostDealReportingImpl implements DealReporting.Impl {
 	private static final Logger log = LoggerFactory.getLogger(HttpPostDealReportingImpl.class);
 
 	/**
+	 * This is the default HTTP connection timeout value [ms].
+	 * The value is {@value}.
 	 * HTTP 接続のタイムアウトのデフォルト値 [ms].
 	 * 値は {@value}.
 	 */
@@ -37,6 +42,15 @@ public class HttpPostDealReportingImpl implements DealReporting.Impl {
 	private String uri_;
 
 	/**
+	 * Creates instance.
+	 * Gets settings from CONFIG and initializes.
+	 * - CONFIG.dealReporting.host : Connection destination host name [{@link String}]
+	 * - CONFIG.dealReporting.ssl : SSL flag [{@link Boolean}]
+	 * - CONFIG.dealReporting.sslTrustAll : OK flag [{@link Boolean}] for any SSL
+	 * - CONFIG.dealReporting.port : Connection destination port [{@link Integer}].
+	 * If there are no settings, 443 for SSL, 80 for all else.                           
+	 * - CONFIG.dealReporting.uri : Connection URI [{@link String}]
+	 * @param vertx vertx object
 	 * インスタンスを作成する.
 	 * CONFIG から設定を取得し初期化する.
 	 * - CONFIG.dealReporting.host : 接続先ホスト名 [{@link String}]
@@ -80,6 +94,8 @@ public class HttpPostDealReportingImpl implements DealReporting.Impl {
 	}
 
 	/**
+	 * Converts all attributes ending with "Datetime" to ISO format because they should be datetime strings in the standard format for the APIS program.
+	 * @param obj DEAL object to convert
 	 * "DateTime" で終わる属性はすべて APIS プログラムの標準フォーマットの日時文字列のはずなので ISO フォーマットに変換する.
 	 * @param obj 変換対象 DEAL オブジェクト
 	 */
@@ -112,6 +128,9 @@ public class HttpPostDealReportingImpl implements DealReporting.Impl {
 			body_ = body;
 		}
 		/**
+		 * Executes HTTP POST processing.
+		 * (Maybe because of poor implementation) The result may be returned twice, so this is blocked here.
+		 * @param completionHandler The completion handler
 		 * HTTP POST 処理実行.
 		 * ( 実装がまずいのか ) 二度結果が返ってくることがあるためここでブロックする.
 		 * @param completionHandler the completion handler

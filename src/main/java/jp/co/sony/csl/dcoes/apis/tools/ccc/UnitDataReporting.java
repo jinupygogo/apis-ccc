@@ -14,6 +14,13 @@ import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.http_post.HttpPostUnitDataReport
 import jp.co.sony.csl.dcoes.apis.tools.ccc.impl.mongo_db.MongoDBUnitDataReportingImpl;
 
 /**
+ * This Verticle reports unit data to the outside.
+ * It is started from {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle.
+ * At regular intervals, the verticle obtains unit data from GridMaster and carries out reporting.
+ * The actual reporting process has two types below.
+ * - If {@code CONFIG.unitDataReporting.type} is {@code http_post} : {@link HttpPostUnitDataReportingImpl}
+ * - If {@code CONFIG.unitDataReporting.type} is {@code mongo_db} : {@link MongoDBUnitDataReportingImpl}
+ * @author OES Project 
  * ユニットデータを外部に通知する Verticle.
  * {@link jp.co.sony.csl.dcoes.apis.tools.ccc.util.Starter} Verticle から起動される.
  * 一定時間ごとに GridMaster からユニットデータを取得し通知する.
@@ -26,11 +33,15 @@ public class UnitDataReporting extends AbstractVerticle {
 	private static final Logger log = LoggerFactory.getLogger(UnitDataReporting.class);
 
 	/**
+	 * Sets the default value of the reporting cycle in [ms] unit.
+	 * The value is {@value}
 	 * 通知周期のデフォルト値 [ms].
 	 * 値は {@value}
 	 */
 	private static final Long DEFAULT_UNIT_DATA_REPORTING_PERIOD_MSEC = 30000L;
 	/**
+	 * Sets the default value of the reporting period.
+	 * The value is {@value}
 	 * 通知方式のデフォルト値.
 	 * 値は {@value}
 	 */
@@ -42,7 +53,14 @@ public class UnitDataReporting extends AbstractVerticle {
 	private boolean stopped_ = false;
 
 	/**
-	 * 起動時に呼び出される.
+	 * Called during startup.
+	 * Gets settings from CONFIG and initializes.
+	 * - {@code CONFIG.unitDataReporting.enabled}
+	 * - {@code CONFIG.unitDataReporting.type}
+	 * Prepares the object to be implemented.
+	 * Starts the timer.
+	 * @param startFuture {@inheritDoc}
+	 * @throws Exception {@inheritDoc}
 	 * CONFIG から設定を取得し初期化する.
 	 * - {@code CONFIG.unitDataReporting.enabled}
 	 * - {@code CONFIG.unitDataReporting.type}
@@ -83,6 +101,9 @@ public class UnitDataReporting extends AbstractVerticle {
 	}
 
 	/**
+	 * Called when stopped.
+	 * Sets a flag for stopping the timer.
+	 * @throws Exception {@inheritDoc}
 	 * 停止時に呼び出される.
 	 * タイマを止めるためのフラグを立てる.
 	 * @throws Exception {@inheritDoc}
@@ -95,6 +116,7 @@ public class UnitDataReporting extends AbstractVerticle {
 	////
 
 	/**
+	 * Sets the timer with the default time.
 	 * デフォルト時間でタイマをセットする.
 	 */
 	private void setUnitDataReportingTimer_() {
@@ -102,6 +124,8 @@ public class UnitDataReporting extends AbstractVerticle {
 		setUnitDataReportingTimer_(delay);
 	}
 	/**
+	 * Sets the timer with the time specified by {@code delay}.
+	 * @param delay Time set by timer [ms]
 	 * {@code delay} で指定した時間でタイマをセットする.
 	 * @param delay タイマ設定時間 [ms]
 	 */
@@ -109,6 +133,8 @@ public class UnitDataReporting extends AbstractVerticle {
 		unitDataReportingTimerId_ = vertx.setTimer(delay, this::unitDataReportingTimerHandler_);
 	}
 	/**
+	 * This process is called by the timer.
+	 * @param timerId Timer ID
 	 * タイマから呼び出される処理.
 	 * @param timerId タイマ ID
 	 */
@@ -125,6 +151,7 @@ public class UnitDataReporting extends AbstractVerticle {
 				if (result != null) {
 					if (log.isInfoEnabled()) log.info("size of unit data : " + result.size());
 					if (!result.isEmpty()) {
+						// Ensures that the element is a JsonObject
 						// 要素が JsonObject であることを保証する
 						JsonObject filtered = new JsonObject();
 						for (String aKey : result.fieldNames()) {
@@ -139,6 +166,7 @@ public class UnitDataReporting extends AbstractVerticle {
 						if (log.isInfoEnabled()) log.info("size of filtered unit data : " + result.size());
 					}
 					if (!result.isEmpty()) {
+						// Adds data unit ID
 						// データセット ID を追加する
 						long id = System.currentTimeMillis();
 						if (log.isDebugEnabled()) log.debug("datasetId : " + id);
@@ -172,11 +200,16 @@ public class UnitDataReporting extends AbstractVerticle {
 	////
 
 	/**
+	 * This is the interface for calling the object to be implemented for the reporting process.
+	 * @author OES Project
 	 * 通知処理の実装オブジェクトを呼び出すためのインタフェイス.
 	 * @author OES Project
 	 */
 	public interface Impl {
 		/**
+		 * Sends one Power Sharing information report.
+		 * @param unitData Unit data {@link JsonObject}
+		 * @param completionHandler The completion handler
 		 * 融通情報を一つ通知する.
 		 * @param unitData ユニットデータ {@link JsonObject}
 		 * @param completionHandler the completion handler

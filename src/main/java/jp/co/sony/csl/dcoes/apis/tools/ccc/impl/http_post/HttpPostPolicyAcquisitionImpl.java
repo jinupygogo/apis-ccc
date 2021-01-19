@@ -15,14 +15,16 @@ import jp.co.sony.csl.dcoes.apis.common.util.vertx.VertxConfig;
 import jp.co.sony.csl.dcoes.apis.tools.ccc.PolicyAcquisition;
 
 /**
- * ウェブサービスに対して HTTP POST で POLICY を取得する実装.
- * {@link PolicyAcquisition} で使用される.
+ * Implements acquisition of POLICY via HTTP POST for web service. 
+ * Used in {@link PolicyAcquisition}.
  * @author OES Project
  */
 public class HttpPostPolicyAcquisitionImpl implements PolicyAcquisition.Impl {
 	private static final Logger log = LoggerFactory.getLogger(HttpPostPolicyAcquisitionImpl.class);
 
 	/**
+	 * This is the default HTTP connection timeout value [ms].
+	 * The value is {@value}.
 	 * HTTP 接続のタイムアウトのデフォルト値 [ms].
 	 * 値は {@value}.
 	 */
@@ -33,6 +35,15 @@ public class HttpPostPolicyAcquisitionImpl implements PolicyAcquisition.Impl {
 	private String uri_;
 
 	/**
+	 * Creates instance.
+	 * Gets settings from CONFIG and initializes.
+	 * - CONFIG.policyAcquisition.host : Connection destination host name [{@link String}]
+	 * - CONFIG.policyAcquisition.ssl : SSL flag [{@link Boolean}]
+	 * - CONFIG.policyAcquisition.sslTrustAll : OK flag [{@link Boolean}] for any SSL
+	 * - CONFIG.policyAcquisition.port : Destination connection port [{@link Integer}].
+	 *                                   If there are no settings, 443 for SSL, 80 for all else.
+	 * - CONFIG.policyAcquisition.uri : Connection destination URI [{@link String}]
+	 * @param vertx vertx object
 	 * インスタンスを作成する.
 	 * CONFIG から設定を取得し初期化する.
 	 * - CONFIG.policyAcquisition.host : 接続先ホスト名 [{@link String}]
@@ -81,6 +92,9 @@ public class HttpPostPolicyAcquisitionImpl implements PolicyAcquisition.Impl {
 			body_ = body;
 		}
 		/**
+		 * Executes HTTP POST processing.
+		 * (Maybe because of poor implementation) The result may be returned twice, so this is blocked here.
+		 * @param completionHandler The completion handler
 		 * HTTP POST 処理実行.
 		 * ( 実装がまずいのか ) 二度結果が返ってくることがあるためここでブロックする.
 		 * @param completionHandler the completion handler
