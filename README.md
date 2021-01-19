@@ -63,6 +63,20 @@ Refer to "Chapter 6, Configuration Files" in the [apis-ccc_specification](#ancho
 &emsp;[apis-mian_ccc_specification(JP)](https://github.com/SonyCSL/apis-ccc/blob/main/doc/jp/apis-ccc_specification_JP.md)
 
 
+## API Specification  
+
+An example of creating an API specification using the Javadoc command is shown below.  
+(For Ubuntu18.04)  
+  
+```bash  
+$ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/  
+$ cd apis-ccc  
+$ mvn javadoc:javadoc  
+```  
+
+The API specification is created in apis-main/target/site/apidocs/.  
+
+
 ## License
 &emsp;[Apache License Version 2.0](https://github.com/SonyCSL/apis-ccc/blob/master/LICENSE)
 
